@@ -4,7 +4,7 @@ import "github.com/gen2brain/raylib-go/raylib"
 
 const (
     screenWidth  = 800
-	screenHeight = 450
+	screenHeight = 600
 )
 
 func main() {
