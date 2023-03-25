@@ -11,7 +11,7 @@ func main() {
 	rl.InitWindow(screenWidth, screenHeight, "Element Theory Playground")
 	rl.SetTargetFPS(60)
 
-	ents := []Object{
+	ents := []*Element{
 		NewElement(rl.NewVector2(100, 100), "L"),
 		NewElement(rl.NewVector2(100, 100), "A"),
 		NewElement(rl.NewVector2(100, 100), "U"),
@@ -22,6 +22,9 @@ func main() {
 	for _, ent := range ents {
 		testPlayground.AddObject(ent)
 	}
+	testSeg := NewSegment(rl.NewVector2(100, 100), ents)
+
+	testPlayground.AddObject(testSeg)
 
 	for !rl.WindowShouldClose() {
 		testPlayground.Update()

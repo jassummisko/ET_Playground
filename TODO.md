@@ -3,3 +3,5 @@
     - [x] If item clicked, it gets pulled to the top of the slice.
 
 - [x] Move doMouse() outside of Entity implementation and into Playground implementation
+
+- [ ] Implement drop-on-top functionality

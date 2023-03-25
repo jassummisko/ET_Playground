@@ -3,8 +3,6 @@ package main
 import rl "github.com/gen2brain/raylib-go/raylib"
 
 type Mouser interface {
-	SetSelected(bool)
-	GetSelected() bool
 	IsMousedOver() bool
 	DrawMouseBox()
 }

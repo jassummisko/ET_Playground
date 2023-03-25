@@ -3,18 +3,16 @@ package main
 import rl "github.com/gen2brain/raylib-go/raylib"
 
 type Entity struct {
-	pos          rl.Vector2
-	outline      rl.Rectangle
-	isMousedOver bool
-	selected     bool
-	spacing      float32
+	pos     rl.Vector2
+	outline rl.Rectangle
+	spacing float32
 }
 
 func NewEntity(pos rl.Vector2) *Entity {
 	var (
 		spacing       float32 = 4
 		outlineWidth  float32 = 24
-		outlineHeight float32 = 32
+		outlineHeight float32 = 36
 	)
 
 	return &Entity{
@@ -47,18 +45,6 @@ func (e Entity) DrawMouseBox() {
 		rl.Black,
 	)
 
-}
-
-func (e *Entity) SetSelected(selected bool) {
-	e.selected = selected
-}
-
-func (e Entity) GetSelected() bool {
-	return e.selected
-}
-
-func (e *Entity) SetMousedOver(isMousedOver bool) {
-	e.isMousedOver = isMousedOver
 }
 
 func (e *Entity) IsMousedOver() bool {
