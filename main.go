@@ -14,9 +14,9 @@ func initPlayground() {
 	g_playground = NewPlayground()
 
 	ents := []*Element{
-		NewElement(rl.NewVector2(100, 100), "L"),
-		NewElement(rl.NewVector2(100, 100), "A"),
-		NewElement(rl.NewVector2(100, 100), "U"),
+		NewElement(rl.NewVector2(100, 100), "L", false),
+		NewElement(rl.NewVector2(100, 100), "A", false),
+		NewElement(rl.NewVector2(100, 100), "U", false),
 	}
 
 	for _, ent := range ents {
@@ -25,8 +25,8 @@ func initPlayground() {
 	testSeg := NewSegment(rl.NewVector2(100, 100), ents)
 
 	g_playground.AddObject(testSeg)
-	g_playground.AddObject(NewElement(rl.NewVector2(300, 300), "H"))
-	g_playground.AddObject(NewElement(rl.NewVector2(400, 300), "L"))
+	g_playground.AddObject(NewElement(rl.NewVector2(300, 300), "H", false))
+	g_playground.AddObject(NewElement(rl.NewVector2(400, 300), "L", false))
 
 }
 

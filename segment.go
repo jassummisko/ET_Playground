@@ -72,3 +72,5 @@ func (seg *Segment) Draw() {
 }
 
 func (seg *Segment) DropInto(o Object) {}
+
+func (seg *Segment) AltAction() {}

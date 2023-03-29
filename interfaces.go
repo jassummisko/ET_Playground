@@ -14,9 +14,13 @@ type Mover interface {
 	GetPos() rl.Vector2
 }
 
+type Interactable interface {
+	AltAction()
+	DropInto(Object)
+}
+
 type Collider interface {
 	GetColBox() rl.Rectangle
-	DropInto(Object)
 	GetZLevel() int
 }
 
@@ -24,6 +28,7 @@ type Object interface {
 	Mouser
 	Mover
 	Collider
+	Interactable
 	IsToDelete() bool
 	MarkToDelete()
 	Update()

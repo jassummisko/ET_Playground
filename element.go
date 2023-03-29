@@ -8,11 +8,11 @@ type Element struct {
 	headed bool
 }
 
-func NewElement(pos rl.Vector2, label string) *Element {
+func NewElement(pos rl.Vector2, label string, headed bool) *Element {
 	return &Element{
 		*NewEntity(pos, 2),
 		label,
-		false,
+		headed,
 	}
 }
 
@@ -53,4 +53,13 @@ func (e *Element) DropInto(o Object) {
 		seg := NewSegment(e.pos, elements)
 		e.world.AddObject(seg)
 	}
+}
+
+func (e *Element) AltAction() {
+	e.world.AddObject(
+		NewSegment(
+			e.GetPos(),
+			[]*Element{e},
+		),
+	)
 }

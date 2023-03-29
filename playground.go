@@ -27,6 +27,33 @@ func NewPlayground() *Playground {
 	return &Playground{entities: []Object{}, zOffset: 0}
 }
 
+func (p *Playground) Update() {
+	p.DoMouse()
+	p.KeyboardInput()
+	for _, e := range p.entities {
+		e.Update()
+	}
+	//                               v TODO: THIS IS STUPID. FIX PROBLEM ID 1 BETTER
+	if rl.IsKeyDown(rl.KeyLeftShift) && p.held == nil {
+		p.zOffset = 1
+	} else {
+		p.zOffset = 0
+	}
+
+	p.Clean()
+}
+
+func (p *Playground) Draw() {
+	for _, e := range p.entities {
+		e.Draw()
+
+		_, mousedOver := p.GetEntityAtMousePos()
+		if mousedOver != nil {
+			mousedOver.DrawMouseBox()
+		}
+	}
+}
+
 func (p *Playground) AddObject(o Object) {
 	p.entities = append(p.entities, o)
 }
@@ -80,22 +107,6 @@ func (p *Playground) Clean() {
 	}
 }
 
-func (p *Playground) Update() {
-	p.DoMouse()
-	p.KeyboardInput()
-	for _, e := range p.entities {
-		e.Update()
-	}
-	//                               v THIS IS STUPID. FIX PROBLEM ID 1 BETTER
-	if rl.IsKeyDown(rl.KeyLeftShift) && p.held == nil {
-		p.zOffset = 1
-	} else {
-		p.zOffset = 0
-	}
-
-	p.Clean()
-}
-
 func (p *Playground) MoveObjectToTop(i int) {
 	p.entities = moveObjectToTop(p.entities, i)
 }
@@ -121,11 +132,13 @@ func (p *Playground) LetGoOfHeldObject() {
 }
 
 func (p *Playground) KeyboardInput() {
-	// TEMPORARY
+	// TODO: THIS IS A BODGE. I PROBABLY WANT TO IMPLEMENT A MENU.
 	keyPressed := rl.GetKeyPressed()
 	if KeyIsElement(keyPressed) {
 		p.AddObject(NewElement(
-			rl.GetMousePosition(), string(keyPressed),
+			rl.GetMousePosition(),
+			string(keyPressed),
+			rl.IsKeyDown(rl.KeyLeftShift),
 		),
 		)
 	}
@@ -135,8 +148,12 @@ func (p *Playground) DoMouse() {
 	i, mousedOverObject := p.GetEntityAtMousePos()
 	if mousedOverObject != nil {
 		if rl.IsMouseButtonPressed(0) {
-			p.PickUpObject(mousedOverObject)
-			p.MoveObjectToTop(i)
+			if rl.IsKeyDown(rl.KeyLeftControl) {
+				mousedOverObject.AltAction()
+			} else {
+				p.PickUpObject(mousedOverObject)
+				p.MoveObjectToTop(i)
+			}
 		}
 
 		if rl.IsMouseButtonPressed(1) {
@@ -153,17 +170,6 @@ func (p *Playground) DoMouse() {
 				p.held.DropInto(obj)
 			}
 			p.LetGoOfHeldObject()
-		}
-	}
-}
-
-func (p *Playground) Draw() {
-	for _, e := range p.entities {
-		e.Draw()
-
-		_, mousedOver := p.GetEntityAtMousePos()
-		if mousedOver != nil {
-			mousedOver.DrawMouseBox()
 		}
 	}
 }
