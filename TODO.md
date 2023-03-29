@@ -6,3 +6,4 @@
 - [x] Implement removal functionality
 - [x] Solve problem of held objects still registering objects subordinate to it as moused over
 - [ ] Solve bug where subordinated elements are targeted for selection when an equilevelled element is present (PROBLEM ID 1)
+- [ ] Implement an add-element menu

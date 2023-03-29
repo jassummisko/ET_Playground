@@ -44,6 +44,15 @@ func (seg *Segment) Update() {
 
 }
 
+func (seg *Segment) HasElement(label string) bool {
+	for _, element := range seg.elements {
+		if element.label == label {
+			return true
+		}
+	}
+	return false
+}
+
 func (seg *Segment) Draw() {
 	for _, element := range seg.elements {
 		element.Draw()

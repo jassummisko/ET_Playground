@@ -10,6 +10,13 @@ const (
 	maxZLevels = 3
 )
 
+type State int
+
+const (
+	Main State = iota
+	Menu
+)
+
 type Playground struct {
 	entities []Object
 	held     Object
@@ -20,8 +27,8 @@ func NewPlayground() *Playground {
 	return &Playground{entities: []Object{}, zOffset: 0}
 }
 
-func (p *Playground) AddObject(e Object) {
-	p.entities = append(p.entities, e)
+func (p *Playground) AddObject(o Object) {
+	p.entities = append(p.entities, o)
 }
 
 func (p Playground) GetTopEntityOfAny() (int, Object) {
@@ -92,30 +99,44 @@ func (p *Playground) MoveObjectToTop(i int) {
 	p.entities = moveObjectToTop(p.entities, i)
 }
 
-func (p *Playground) DoMouse() {
-	i, mousedOverObject := p.GetEntityAtMousePos()
-	if mousedOverObject != nil {
-		if rl.IsMouseButtonPressed(0) {
-			p.held = mousedOverObject
-			p.held.SetIsHeld(true)
-			p.MoveObjectToTop(i)
-		}
-	}
+func (p *Playground) PickUpObject(o Object) {
+	p.held = o
+	p.held.SetIsHeld(true)
+}
 
+func (p *Playground) MoveHeldObject() {
 	if p.held != nil {
 		pos := p.held.GetPos()
 		mouseDelta := rl.GetMouseDelta()
 		p.held.SetPos(pos.X+mouseDelta.X, pos.Y+mouseDelta.Y)
 	}
+}
+
+func (p *Playground) LetGoOfHeldObject() {
+	if p.held != nil {
+		p.held.SetIsHeld(false)
+		p.held = nil
+	}
+}
+
+func (p *Playground) DoMouse() {
+	i, mousedOverObject := p.GetEntityAtMousePos()
+	if mousedOverObject != nil {
+		if rl.IsMouseButtonPressed(0) {
+			p.PickUpObject(mousedOverObject)
+			p.MoveObjectToTop(i)
+		}
+	}
+
+	p.MoveHeldObject()
 
 	if rl.IsMouseButtonReleased(0) {
-		_, obj := p.GetEntityAtMousePos()
-		if obj != nil {
-			p.held.DropInto(obj)
-		}
 		if p.held != nil {
-			p.held.SetIsHeld(false)
-			p.held = nil
+			_, obj := p.GetEntityAtMousePos()
+			if obj != nil {
+				p.held.DropInto(obj)
+			}
+			p.LetGoOfHeldObject()
 		}
 	}
 }

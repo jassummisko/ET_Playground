@@ -9,17 +9,15 @@ const (
 
 var g_playground *Playground
 
-func main() {
-	rl.InitWindow(screenWidth, screenHeight, "Element Theory Playground")
-	rl.SetTargetFPS(60)
+func initPlayground() {
+
+	g_playground = NewPlayground()
 
 	ents := []*Element{
 		NewElement(rl.NewVector2(100, 100), "L"),
 		NewElement(rl.NewVector2(100, 100), "A"),
 		NewElement(rl.NewVector2(100, 100), "U"),
 	}
-
-	g_playground = NewPlayground()
 
 	for _, ent := range ents {
 		g_playground.AddObject(ent)
@@ -29,6 +27,14 @@ func main() {
 	g_playground.AddObject(testSeg)
 	g_playground.AddObject(NewElement(rl.NewVector2(300, 300), "H"))
 	g_playground.AddObject(NewElement(rl.NewVector2(400, 300), "L"))
+
+}
+
+func main() {
+	rl.InitWindow(screenWidth, screenHeight, "Element Theory Playground")
+	rl.SetTargetFPS(60)
+
+	initPlayground()
 
 	for !rl.WindowShouldClose() {
 		g_playground.Update()
