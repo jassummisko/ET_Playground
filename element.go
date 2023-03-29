@@ -30,5 +30,10 @@ func (e *Element) DropInto(o Object) {
 	switch v := o.(type) {
 	case *Segment:
 		v.elements = append(v.elements, e)
+	case *Element:
+		t := o.(*Element)
+		elements := []*Element{t, e}
+		seg := NewSegment(e.pos, elements)
+		e.world.AddObject(seg)
 	}
 }

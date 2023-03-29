@@ -7,6 +7,8 @@ const (
 	screenHeight = 600
 )
 
+var g_playground *Playground
+
 func main() {
 	rl.InitWindow(screenWidth, screenHeight, "Element Theory Playground")
 	rl.SetTargetFPS(60)
@@ -17,22 +19,22 @@ func main() {
 		NewElement(rl.NewVector2(100, 100), "U"),
 	}
 
-	testPlayground := NewPlayground()
+	g_playground = NewPlayground()
 
 	for _, ent := range ents {
-		testPlayground.AddObject(ent)
+		g_playground.AddObject(ent)
 	}
 	testSeg := NewSegment(rl.NewVector2(100, 100), ents)
 
-	testPlayground.AddObject(testSeg)
-	testPlayground.AddObject(NewElement(rl.NewVector2(300, 300), "H"))
-	testPlayground.AddObject(NewElement(rl.NewVector2(400, 300), "L"))
+	g_playground.AddObject(testSeg)
+	g_playground.AddObject(NewElement(rl.NewVector2(300, 300), "H"))
+	g_playground.AddObject(NewElement(rl.NewVector2(400, 300), "L"))
 
 	for !rl.WindowShouldClose() {
-		testPlayground.Update()
+		g_playground.Update()
 		rl.BeginDrawing()
 		rl.ClearBackground(rl.GetColor(0xddddddff))
-		testPlayground.Draw()
+		g_playground.Draw()
 		rl.EndDrawing()
 	}
 

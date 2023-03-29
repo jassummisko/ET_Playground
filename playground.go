@@ -29,7 +29,7 @@ func (p Playground) GetTopEntityOfAny() (int, Object) {
 	for z := 0; z < maxZLevels; z++ {
 		for i, e := range p.entities {
 			if e.IsMousedOver() && p.held != e && e.GetZLevel() == z {
-				if skip == 0 {
+				if skip == 0 || z == maxZLevels-1 {
 					return i, e
 				} else {
 					skip--
@@ -65,17 +65,27 @@ func (p Playground) GetEntityAtMousePos() (int, Object) {
 	}
 }
 
+func (p *Playground) Clean() {
+	for i, e := range p.entities {
+		if e.IsToDelete() {
+			p.entities = removeObject(p.entities, i)
+		}
+	}
+}
+
 func (p *Playground) Update() {
 	p.DoMouse()
 	for _, e := range p.entities {
 		e.Update()
 	}
-
-	if rl.IsKeyDown(rl.KeyLeftShift) {
+	//                               v THIS IS STUPID. FIX PROBLEM ID 1 BETTER
+	if rl.IsKeyDown(rl.KeyLeftShift) && p.held == nil {
 		p.zOffset = 1
 	} else {
 		p.zOffset = 0
 	}
+
+	p.Clean()
 }
 
 func (p *Playground) MoveObjectToTop(i int) {
@@ -87,6 +97,7 @@ func (p *Playground) DoMouse() {
 	if mousedOverObject != nil {
 		if rl.IsMouseButtonPressed(0) {
 			p.held = mousedOverObject
+			p.held.SetIsHeld(true)
 			p.MoveObjectToTop(i)
 		}
 	}
@@ -102,7 +113,10 @@ func (p *Playground) DoMouse() {
 		if obj != nil {
 			p.held.DropInto(obj)
 		}
-		p.held = nil
+		if p.held != nil {
+			p.held.SetIsHeld(false)
+			p.held = nil
+		}
 	}
 }
 

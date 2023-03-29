@@ -3,10 +3,13 @@ package main
 import rl "github.com/gen2brain/raylib-go/raylib"
 
 type Entity struct {
-	pos     rl.Vector2
-	outline rl.Rectangle
-	spacing float32
-	z_level int
+	pos         rl.Vector2
+	outline     rl.Rectangle
+	world       *Playground
+	toBeRemoved bool
+	isHeld      bool
+	spacing     float32
+	z_level     int
 }
 
 func NewEntity(pos rl.Vector2, z int) *Entity {
@@ -19,6 +22,7 @@ func NewEntity(pos rl.Vector2, z int) *Entity {
 	return &Entity{
 		pos:     pos,
 		spacing: 4,
+		world:   g_playground,
 		z_level: z,
 		outline: rl.Rectangle{
 			X:      pos.X - spacing,
@@ -64,4 +68,20 @@ func (e *Entity) SetPos(x float32, y float32) {
 
 func (e *Entity) GetZLevel() int {
 	return e.z_level
+}
+
+func (e *Entity) GetIsHeld() bool {
+	return e.isHeld
+}
+
+func (e *Entity) SetIsHeld(isHeld bool) {
+	e.isHeld = isHeld
+}
+
+func (e *Entity) IsToDelete() bool {
+	return e.toBeRemoved
+}
+
+func (e *Entity) MarkToDelete() {
+	e.toBeRemoved = true
 }

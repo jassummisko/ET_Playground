@@ -22,13 +22,25 @@ func (seg *Segment) AddElement(element *Element) {
 	seg.elements = append(seg.elements, element)
 }
 
+func (seg *Segment) RemoveElement(index int) {
+	seg.elements = append(seg.elements[:index], seg.elements[index+1:]...)
+}
+
 func (seg *Segment) Update() {
 	for i, element := range seg.elements {
-		element.SetPos(seg.Entity.pos.X+float32(i)*30+6, seg.Entity.pos.Y)
+		if element.GetIsHeld() {
+			seg.RemoveElement(i)
+		} else {
+			element.SetPos(seg.Entity.pos.X+float32(i)*30+6, seg.Entity.pos.Y)
+		}
 	}
 
 	seg.Entity.Update()
 	seg.Entity.outline.Width = float32(len(seg.elements)*30 + 8)
+
+	if len(seg.elements) == 0 {
+		seg.MarkToDelete()
+	}
 
 }
 
