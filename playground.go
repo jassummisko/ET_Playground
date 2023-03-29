@@ -58,7 +58,7 @@ func (p *Playground) AddObject(o Object) {
 	p.entities = append(p.entities, o)
 }
 
-func (p Playground) GetTopEntityOfAny() (int, Object) {
+func (p Playground) GetTopEntity() (int, Object) {
 	skip := p.zOffset
 	for z := 0; z < maxZLevels; z++ {
 		for i, e := range p.entities {
@@ -93,7 +93,7 @@ func (p Playground) GetTopEntityIgnoringLower() (int, Object) {
 
 func (p Playground) GetEntityAtMousePos() (int, Object) {
 	if p.held == nil {
-		return p.GetTopEntityOfAny()
+		return p.GetTopEntity()
 	} else {
 		return p.GetTopEntityIgnoringLower()
 	}
