@@ -9,7 +9,7 @@ type Segment struct {
 
 func NewSegment(pos rl.Vector2, elements []*Element) *Segment {
 	return &Segment{
-		Entity:   *NewEntity(pos),
+		Entity:   *NewEntity(pos, 1),
 		elements: elements,
 	}
 }
@@ -24,7 +24,6 @@ func (seg *Segment) AddElement(element *Element) {
 
 func (seg *Segment) Update() {
 	for i, element := range seg.elements {
-		element.SetAccessible(false)
 		element.SetPos(seg.Entity.pos.X+float32(i)*30+6, seg.Entity.pos.Y)
 	}
 

@@ -1,48 +1,81 @@
 package main
 
 import (
+	"math"
+
 	rl "github.com/gen2brain/raylib-go/raylib"
+)
+
+const (
+	maxZLevels = 3
 )
 
 type Playground struct {
 	entities []Object
 	held     Object
+	zOffset  int
 }
 
 func NewPlayground() *Playground {
-	return &Playground{entities: []Object{}}
+	return &Playground{entities: []Object{}, zOffset: 0}
 }
 
 func (p *Playground) AddObject(e Object) {
 	p.entities = append(p.entities, e)
 }
 
-func (p Playground) GetEntitiesAtMousePosition() []Object {
-	var entities []Object
-	for _, e := range p.entities {
-		if e.IsMousedOver() && e.GetAccessible() {
-			entities = append(entities, e)
-		}
-	}
-	return entities
-}
-
-func (p Playground) GetTopEntityAtMousePosition() (int, Object) {
-	for i, e := range p.entities {
-		if e.IsMousedOver() && e.GetAccessible() && p.held != e {
-			return i, e
+func (p Playground) GetTopEntityOfAny() (int, Object) {
+	skip := p.zOffset
+	for z := 0; z < maxZLevels; z++ {
+		for i, e := range p.entities {
+			if e.IsMousedOver() && p.held != e && e.GetZLevel() == z {
+				if skip == 0 {
+					return i, e
+				} else {
+					skip--
+				}
+			}
 		}
 	}
 	return -1, nil
 }
 
-func (p *Playground) Update() {
+func (p Playground) GetTopEntityIgnoringLower() (int, Object) {
+	skip := p.zOffset
+	max := int(math.Max(float64(skip), float64(p.held.GetZLevel()+1)))
+	for z := 0; z < max; z++ {
+		for i, e := range p.entities {
+			if e.IsMousedOver() && p.held != e && e.GetZLevel() == z {
+				if skip == 0 {
+					return i, e
+				} else {
+					skip--
+				}
+			}
+		}
+	}
+	return -1, nil
+}
 
+func (p Playground) GetEntityAtMousePos() (int, Object) {
+	if p.held == nil {
+		return p.GetTopEntityOfAny()
+	} else {
+		return p.GetTopEntityIgnoringLower()
+	}
+}
+
+func (p *Playground) Update() {
 	p.DoMouse()
 	for _, e := range p.entities {
 		e.Update()
 	}
 
+	if rl.IsKeyDown(rl.KeyLeftShift) {
+		p.zOffset = 1
+	} else {
+		p.zOffset = 0
+	}
 }
 
 func (p *Playground) MoveObjectToTop(i int) {
@@ -50,7 +83,7 @@ func (p *Playground) MoveObjectToTop(i int) {
 }
 
 func (p *Playground) DoMouse() {
-	i, mousedOverObject := p.GetTopEntityAtMousePosition()
+	i, mousedOverObject := p.GetEntityAtMousePos()
 	if mousedOverObject != nil {
 		if rl.IsMouseButtonPressed(0) {
 			p.held = mousedOverObject
@@ -65,8 +98,10 @@ func (p *Playground) DoMouse() {
 	}
 
 	if rl.IsMouseButtonReleased(0) {
-		_, obj := p.GetTopEntityAtMousePosition()
-		p.held.DropInto(obj)
+		_, obj := p.GetEntityAtMousePos()
+		if obj != nil {
+			p.held.DropInto(obj)
+		}
 		p.held = nil
 	}
 }
@@ -75,7 +110,7 @@ func (p *Playground) Draw() {
 	for _, e := range p.entities {
 		e.Draw()
 
-		_, mousedOver := p.GetTopEntityAtMousePosition()
+		_, mousedOver := p.GetEntityAtMousePos()
 		if mousedOver != nil {
 			mousedOver.DrawMouseBox()
 		}

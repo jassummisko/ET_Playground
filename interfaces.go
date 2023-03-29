@@ -5,8 +5,7 @@ import rl "github.com/gen2brain/raylib-go/raylib"
 type Mouser interface {
 	IsMousedOver() bool
 	DrawMouseBox()
-	GetAccessible() bool
-	SetAccessible(bool)
+	GetZLevel() int
 }
 
 type Mover interface {

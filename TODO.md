@@ -4,4 +4,8 @@
 
 - [x] Move doMouse() outside of Entity implementation and into Playground implementation
 
-- [ ] Implement drop-on-top functionality
+- [x] Implement drop-on-top functionality
+
+- [ ] Implement removal functionality
+
+- [x] Solve problem of held objects still registering objects subordinate to it as moused over

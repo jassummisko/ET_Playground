@@ -3,13 +3,13 @@ package main
 import rl "github.com/gen2brain/raylib-go/raylib"
 
 type Entity struct {
-	pos        rl.Vector2
-	outline    rl.Rectangle
-	spacing    float32
-	accessible bool
+	pos     rl.Vector2
+	outline rl.Rectangle
+	spacing float32
+	z_level int
 }
 
-func NewEntity(pos rl.Vector2) *Entity {
+func NewEntity(pos rl.Vector2, z int) *Entity {
 	var (
 		spacing       float32 = 4
 		outlineWidth  float32 = 24
@@ -17,9 +17,9 @@ func NewEntity(pos rl.Vector2) *Entity {
 	)
 
 	return &Entity{
-		pos:        pos,
-		spacing:    4,
-		accessible: true,
+		pos:     pos,
+		spacing: 4,
+		z_level: z,
 		outline: rl.Rectangle{
 			X:      pos.X - spacing,
 			Y:      pos.Y - spacing/2,
@@ -53,19 +53,15 @@ func (e *Entity) IsMousedOver() bool {
 	return rl.CheckCollisionPointRec(rl.GetMousePosition(), e.GetColBox())
 }
 
+func (e *Entity) GetPos() rl.Vector2 {
+	return e.pos
+}
+
 func (e *Entity) SetPos(x float32, y float32) {
 	e.pos.X = x
 	e.pos.Y = y
 }
 
-func (e *Entity) GetPos() rl.Vector2 {
-	return e.pos
-}
-
-func (e *Entity) SetAccessible(accessible bool) {
-	e.accessible = accessible
-}
-
-func (e *Entity) GetAccessible() bool {
-	return e.accessible
+func (e *Entity) GetZLevel() int {
+	return e.z_level
 }

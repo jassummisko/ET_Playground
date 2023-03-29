@@ -9,7 +9,7 @@ type Element struct {
 
 func NewElement(pos rl.Vector2, label string) *Element {
 	return &Element{
-		*NewEntity(pos),
+		*NewEntity(pos, 2),
 		label,
 	}
 }
