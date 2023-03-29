@@ -28,7 +28,7 @@ func (seg *Segment) RemoveElement(index int) {
 
 func (seg *Segment) Update() {
 	for i, element := range seg.elements {
-		if element.GetIsHeld() {
+		if element.GetIsHeld() || element.IsToDelete() {
 			seg.RemoveElement(i)
 		} else {
 			element.SetPos(seg.Entity.pos.X+float32(i)*30+6, seg.Entity.pos.Y)

@@ -82,6 +82,7 @@ func (p *Playground) Clean() {
 
 func (p *Playground) Update() {
 	p.DoMouse()
+	p.KeyboardInput()
 	for _, e := range p.entities {
 		e.Update()
 	}
@@ -119,12 +120,27 @@ func (p *Playground) LetGoOfHeldObject() {
 	}
 }
 
+func (p *Playground) KeyboardInput() {
+	// TEMPORARY
+	keyPressed := rl.GetKeyPressed()
+	if KeyIsElement(keyPressed) {
+		p.AddObject(NewElement(
+			rl.GetMousePosition(), string(keyPressed),
+		),
+		)
+	}
+}
+
 func (p *Playground) DoMouse() {
 	i, mousedOverObject := p.GetEntityAtMousePos()
 	if mousedOverObject != nil {
 		if rl.IsMouseButtonPressed(0) {
 			p.PickUpObject(mousedOverObject)
 			p.MoveObjectToTop(i)
+		}
+
+		if rl.IsMouseButtonPressed(1) {
+			mousedOverObject.MarkToDelete()
 		}
 	}
 
