@@ -5,6 +5,8 @@ import rl "github.com/gen2brain/raylib-go/raylib"
 type Mouser interface {
 	IsMousedOver() bool
 	DrawMouseBox()
+	GetAccessible() bool
+	SetAccessible(bool)
 }
 
 type Mover interface {
@@ -14,6 +16,7 @@ type Mover interface {
 
 type Collider interface {
 	GetColBox() rl.Rectangle
+	DropInto(Object)
 }
 
 type Object interface {

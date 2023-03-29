@@ -6,7 +6,7 @@ import (
 
 type Playground struct {
 	entities []Object
-	selected Object
+	held     Object
 }
 
 func NewPlayground() *Playground {
@@ -20,7 +20,7 @@ func (p *Playground) AddObject(e Object) {
 func (p Playground) GetEntitiesAtMousePosition() []Object {
 	var entities []Object
 	for _, e := range p.entities {
-		if e.IsMousedOver() {
+		if e.IsMousedOver() && e.GetAccessible() {
 			entities = append(entities, e)
 		}
 	}
@@ -29,7 +29,7 @@ func (p Playground) GetEntitiesAtMousePosition() []Object {
 
 func (p Playground) GetTopEntityAtMousePosition() (int, Object) {
 	for i, e := range p.entities {
-		if e.IsMousedOver() {
+		if e.IsMousedOver() && e.GetAccessible() && p.held != e {
 			return i, e
 		}
 	}
@@ -53,19 +53,21 @@ func (p *Playground) DoMouse() {
 	i, mousedOverObject := p.GetTopEntityAtMousePosition()
 	if mousedOverObject != nil {
 		if rl.IsMouseButtonPressed(0) {
-			p.selected = mousedOverObject
+			p.held = mousedOverObject
 			p.MoveObjectToTop(i)
 		}
 	}
 
-	if p.selected != nil {
-		pos := p.selected.GetPos()
+	if p.held != nil {
+		pos := p.held.GetPos()
 		mouseDelta := rl.GetMouseDelta()
-		p.selected.SetPos(pos.X+mouseDelta.X, pos.Y+mouseDelta.Y)
+		p.held.SetPos(pos.X+mouseDelta.X, pos.Y+mouseDelta.Y)
 	}
 
 	if rl.IsMouseButtonReleased(0) {
-		p.selected = nil
+		_, obj := p.GetTopEntityAtMousePosition()
+		p.held.DropInto(obj)
+		p.held = nil
 	}
 }
 

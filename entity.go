@@ -3,9 +3,10 @@ package main
 import rl "github.com/gen2brain/raylib-go/raylib"
 
 type Entity struct {
-	pos     rl.Vector2
-	outline rl.Rectangle
-	spacing float32
+	pos        rl.Vector2
+	outline    rl.Rectangle
+	spacing    float32
+	accessible bool
 }
 
 func NewEntity(pos rl.Vector2) *Entity {
@@ -16,8 +17,9 @@ func NewEntity(pos rl.Vector2) *Entity {
 	)
 
 	return &Entity{
-		pos:     pos,
-		spacing: 4,
+		pos:        pos,
+		spacing:    4,
+		accessible: true,
 		outline: rl.Rectangle{
 			X:      pos.X - spacing,
 			Y:      pos.Y - spacing/2,
@@ -58,4 +60,12 @@ func (e *Entity) SetPos(x float32, y float32) {
 
 func (e *Entity) GetPos() rl.Vector2 {
 	return e.pos
+}
+
+func (e *Entity) SetAccessible(accessible bool) {
+	e.accessible = accessible
+}
+
+func (e *Entity) GetAccessible() bool {
+	return e.accessible
 }

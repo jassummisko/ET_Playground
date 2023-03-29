@@ -24,7 +24,7 @@ func (seg *Segment) AddElement(element *Element) {
 
 func (seg *Segment) Update() {
 	for i, element := range seg.elements {
-		// I might want to add 'element.Update()' here in the future instead of in playground.Update()
+		element.SetAccessible(false)
 		element.SetPos(seg.Entity.pos.X+float32(i)*30+6, seg.Entity.pos.Y)
 	}
 
@@ -50,3 +50,5 @@ func (seg *Segment) Draw() {
 		int32(seg.pos.Y),
 		32, rl.GetColor(0x111111ff))
 }
+
+func (seg *Segment) DropInto(o Object) {}

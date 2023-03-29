@@ -25,3 +25,10 @@ func (e Element) Draw() {
 		int32(e.pos.Y),
 		32, rl.GetColor(0x111111ff))
 }
+
+func (e *Element) DropInto(o Object) {
+	switch v := o.(type) {
+	case *Segment:
+		v.elements = append(v.elements, e)
+	}
+}

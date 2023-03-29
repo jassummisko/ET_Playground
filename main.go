@@ -25,6 +25,7 @@ func main() {
 	testSeg := NewSegment(rl.NewVector2(100, 100), ents)
 
 	testPlayground.AddObject(testSeg)
+	testPlayground.AddObject(NewElement(rl.NewVector2(300, 300), "H"))
 
 	for !rl.WindowShouldClose() {
 		testPlayground.Update()
