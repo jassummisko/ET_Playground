@@ -28,10 +28,33 @@ func NewPlayground() *Playground {
 }
 
 func (p *Playground) Update() {
-	p.DoMouse()
+	p.MouseInput()
 	p.KeyboardInput()
-	for _, e := range p.entities {
-		e.Update()
+	p.UpdateObjects()
+	p.CleanObjects()
+}
+
+func (p *Playground) Draw() {
+	p.DrawObjects()
+	p.DrawMouseBox()
+}
+
+func (p *Playground) MouseInput() {
+	p.HandleClick(p.GetEntityAtMousePos())
+	p.HandleMouseDrag()
+	p.HandleClickRelease()
+}
+
+func (p *Playground) KeyboardInput() {
+	// TODO: THIS IS A BODGE. I PROBABLY WANT TO IMPLEMENT A MENU.
+	keyPressed := rl.GetKeyPressed()
+	if KeyIsElement(keyPressed) {
+		p.AddObject(NewElement(
+			rl.GetMousePosition(),
+			string(keyPressed),
+			rl.IsKeyDown(rl.KeyLeftShift),
+		),
+		)
 	}
 	//                               v TODO: THIS IS STUPID. FIX PROBLEM ID 1 BETTER
 	if rl.IsKeyDown(rl.KeyLeftShift) && p.held == nil {
@@ -39,23 +62,29 @@ func (p *Playground) Update() {
 	} else {
 		p.zOffset = 0
 	}
-
-	p.Clean()
-}
-
-func (p *Playground) Draw() {
-	for _, e := range p.entities {
-		e.Draw()
-
-		_, mousedOver := p.GetEntityAtMousePos()
-		if mousedOver != nil {
-			mousedOver.DrawMouseBox()
-		}
-	}
 }
 
 func (p *Playground) AddObject(o Object) {
 	p.entities = append(p.entities, o)
+}
+
+func (p *Playground) UpdateObjects() {
+	for _, e := range p.entities {
+		e.Update()
+	}
+}
+
+func (p *Playground) DrawObjects() {
+	for _, e := range p.entities {
+		e.Draw()
+	}
+}
+
+func (p *Playground) DrawMouseBox() {
+	_, mousedOver := p.GetEntityAtMousePos()
+	if mousedOver != nil {
+		mousedOver.DrawMouseBox()
+	}
 }
 
 func (p Playground) GetTopEntity() (int, Object) {
@@ -99,7 +128,7 @@ func (p Playground) GetEntityAtMousePos() (int, Object) {
 	}
 }
 
-func (p *Playground) Clean() {
+func (p *Playground) CleanObjects() {
 	for i, e := range p.entities {
 		if e.IsToDelete() {
 			p.entities = removeObject(p.entities, i)
@@ -116,14 +145,6 @@ func (p *Playground) PickUpObject(o Object) {
 	p.held.SetIsHeld(true)
 }
 
-func (p *Playground) MoveHeldObject() {
-	if p.held != nil {
-		pos := p.held.GetPos()
-		mouseDelta := rl.GetMouseDelta()
-		p.held.SetPos(pos.X+mouseDelta.X, pos.Y+mouseDelta.Y)
-	}
-}
-
 func (p *Playground) LetGoOfHeldObject() {
 	if p.held != nil {
 		p.held.SetIsHeld(false)
@@ -131,21 +152,15 @@ func (p *Playground) LetGoOfHeldObject() {
 	}
 }
 
-func (p *Playground) KeyboardInput() {
-	// TODO: THIS IS A BODGE. I PROBABLY WANT TO IMPLEMENT A MENU.
-	keyPressed := rl.GetKeyPressed()
-	if KeyIsElement(keyPressed) {
-		p.AddObject(NewElement(
-			rl.GetMousePosition(),
-			string(keyPressed),
-			rl.IsKeyDown(rl.KeyLeftShift),
-		),
-		)
+func (p *Playground) HandleMouseDrag() {
+	if p.held != nil {
+		pos := p.held.GetPos()
+		mouseDelta := rl.GetMouseDelta()
+		p.held.SetPos(pos.X+mouseDelta.X, pos.Y+mouseDelta.Y)
 	}
 }
 
-func (p *Playground) DoMouse() {
-	i, mousedOverObject := p.GetEntityAtMousePos()
+func (p *Playground) HandleClick(i int, mousedOverObject Object) {
 	if mousedOverObject != nil {
 		if rl.IsMouseButtonPressed(0) {
 			if rl.IsKeyDown(rl.KeyLeftControl) {
@@ -160,9 +175,9 @@ func (p *Playground) DoMouse() {
 			mousedOverObject.MarkToDelete()
 		}
 	}
+}
 
-	p.MoveHeldObject()
-
+func (p *Playground) HandleClickRelease() {
 	if rl.IsMouseButtonReleased(0) {
 		if p.held != nil {
 			_, obj := p.GetEntityAtMousePos()
