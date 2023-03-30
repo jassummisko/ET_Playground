@@ -10,7 +10,6 @@ const (
 var g_playground *Playground
 
 func initPlayground() {
-
 	g_playground = NewPlayground()
 
 	ents := []*Element{
@@ -27,7 +26,6 @@ func initPlayground() {
 	g_playground.AddObject(testSeg)
 	g_playground.AddObject(NewElement(rl.NewVector2(300, 300), "H", false))
 	g_playground.AddObject(NewElement(rl.NewVector2(400, 300), "L", false))
-
 }
 
 func main() {

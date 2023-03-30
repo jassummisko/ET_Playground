@@ -19,12 +19,16 @@ type Collider interface {
 	GetZLevel() int
 }
 
+type Actor interface {
+	AltAction()
+	DropInto(Object)
+}
+
 type Interacter interface {
 	Mouser
 	Mover
 	Collider
-	AltAction()
-	DropInto(Object)
+	Actor
 }
 
 type Deleter interface {

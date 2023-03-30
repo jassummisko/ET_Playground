@@ -50,7 +50,7 @@ func (e *Element) DropInto(o Object) {
 		}
 		t := o.(*Element)
 		elements := []*Element{t, e}
-		seg := NewSegment(e.pos, elements)
+		seg := NewSegment(v.GetPosOfNewSegment(), elements)
 		e.world.AddObject(seg)
 	}
 }
@@ -58,8 +58,15 @@ func (e *Element) DropInto(o Object) {
 func (e *Element) AltAction() {
 	e.world.AddObject(
 		NewSegment(
-			e.GetPos(),
+			e.GetPosOfNewSegment(),
 			[]*Element{e},
 		),
+	)
+}
+
+func (e *Element) GetPosOfNewSegment() rl.Vector2 {
+	return rl.NewVector2(
+		float32(e.pos.X-6),
+		float32(e.pos.Y),
 	)
 }

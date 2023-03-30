@@ -14,6 +14,34 @@ func NewSegment(pos rl.Vector2, elements []*Element) *Segment {
 	}
 }
 
+
+func (seg *Segment) Update() {
+	seg.UpdateElements()
+	seg.Entity.Update()
+	seg.UpdateOutline()
+}
+
+func (seg *Segment) Draw() {
+	for _, element := range seg.elements {
+		element.Draw()
+	}
+	seg.DrawPipes()
+}
+
+func (seg *Segment) UpdateElements() {
+	for i, element := range seg.elements {
+		if element.GetIsHeld() || element.IsToDelete() {
+			seg.RemoveElement(i)
+		} else {
+			element.SetPos(seg.Entity.pos.X+float32(i)*30+6, seg.Entity.pos.Y)
+		}
+	}
+}
+
+func (seg *Segment) UpdateOutline() {
+	seg.Entity.outline.Width = float32(seg.GetWidth()+10)
+}
+
 func (seg Segment) GetElements() []*Element {
 	return seg.elements
 }
@@ -26,24 +54,6 @@ func (seg *Segment) RemoveElement(index int) {
 	seg.elements = append(seg.elements[:index], seg.elements[index+1:]...)
 }
 
-func (seg *Segment) Update() {
-	for i, element := range seg.elements {
-		if element.GetIsHeld() || element.IsToDelete() {
-			seg.RemoveElement(i)
-		} else {
-			element.SetPos(seg.Entity.pos.X+float32(i)*30+6, seg.Entity.pos.Y)
-		}
-	}
-
-	seg.Entity.Update()
-	seg.Entity.outline.Width = float32(len(seg.elements)*30 + 8)
-
-	if len(seg.elements) == 0 {
-		seg.MarkToDelete()
-	}
-
-}
-
 func (seg *Segment) HasElement(label string) bool {
 	for _, element := range seg.elements {
 		if element.label == label {
@@ -53,11 +63,7 @@ func (seg *Segment) HasElement(label string) bool {
 	return false
 }
 
-func (seg *Segment) Draw() {
-	for _, element := range seg.elements {
-		element.Draw()
-	}
-
+func (seg *Segment) DrawPipes() {
 	rl.DrawText(
 		"|",
 		int32(seg.pos.X),
@@ -66,11 +72,21 @@ func (seg *Segment) Draw() {
 
 	rl.DrawText(
 		"|",
-		int32(seg.pos.X+float32(len(seg.elements)*30)),
+		int32(seg.pos.X)+seg.GetWidth(),
 		int32(seg.pos.Y),
 		32, rl.GetColor(0x111111ff))
 }
 
+func (seg Segment) GetWidth() int32 {
+	if len(seg.elements) > 0 {
+		return int32(len(seg.elements)*30)
+	} else {
+		return int32(30)
+	}
+}
+
 func (seg *Segment) DropInto(o Object) {}
 
-func (seg *Segment) AltAction() {}
+func (seg *Segment) AltAction() {
+	seg.MarkToDelete()
+}
