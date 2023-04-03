@@ -7,6 +7,11 @@ const (
 	screenHeight = 600
 )
 
+var g_palette []rl.Color = []rl.Color{
+	rl.GetColor(0x111111ff), // Black
+	rl.GetColor(0xddddddff), // White
+}
+
 var g_playground *Playground
 
 func initPlayground() {
@@ -37,7 +42,7 @@ func main() {
 	for !rl.WindowShouldClose() {
 		g_playground.Update()
 		rl.BeginDrawing()
-		rl.ClearBackground(rl.GetColor(0xddddddff))
+		rl.ClearBackground(g_palette[1])
 		g_playground.Draw()
 		rl.EndDrawing()
 	}

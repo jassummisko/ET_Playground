@@ -48,7 +48,7 @@ func (e Entity) DrawMouseBox() {
 		e.outline.ToInt32().Y,
 		e.outline.ToInt32().Width,
 		e.outline.ToInt32().Height,
-		rl.Black,
+		g_palette[0],
 	)
 
 }

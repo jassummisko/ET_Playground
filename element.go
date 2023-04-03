@@ -25,7 +25,7 @@ func (e Element) Draw() {
 		e.label,
 		int32(e.pos.X),
 		int32(e.pos.Y),
-		32, rl.GetColor(0x111111ff))
+		32, g_palette[0])
 
 	if e.headed {
 		rl.DrawRectangle(
@@ -33,7 +33,7 @@ func (e Element) Draw() {
 			e.outline.ToInt32().Y+e.outline.ToInt32().Height,
 			e.outline.ToInt32().Width,
 			3,
-			rl.GetColor(0x111111ff),
+			g_palette[0],
 		)
 	}
 }

@@ -14,7 +14,6 @@ func NewSegment(pos rl.Vector2, elements []*Element) *Segment {
 	}
 }
 
-
 func (seg *Segment) Update() {
 	seg.UpdateElements()
 	seg.Entity.Update()
@@ -39,7 +38,7 @@ func (seg *Segment) UpdateElements() {
 }
 
 func (seg *Segment) UpdateOutline() {
-	seg.Entity.outline.Width = float32(seg.GetWidth()+10)
+	seg.Entity.outline.Width = float32(seg.GetWidth() + 10)
 }
 
 func (seg Segment) GetElements() []*Element {
@@ -68,18 +67,18 @@ func (seg *Segment) DrawPipes() {
 		"|",
 		int32(seg.pos.X),
 		int32(seg.pos.Y),
-		32, rl.GetColor(0x111111ff))
+		32, g_palette[0])
 
 	rl.DrawText(
 		"|",
 		int32(seg.pos.X)+seg.GetWidth(),
 		int32(seg.pos.Y),
-		32, rl.GetColor(0x111111ff))
+		32, g_palette[0])
 }
 
 func (seg Segment) GetWidth() int32 {
 	if len(seg.elements) > 0 {
-		return int32(len(seg.elements)*30)
+		return int32(len(seg.elements) * 30)
 	} else {
 		return int32(30)
 	}
