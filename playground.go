@@ -30,19 +30,65 @@ func NewPlayground() *Playground {
 func (p *Playground) Update() {
 	p.MouseInput()
 	p.KeyboardInput()
-	p.UpdateObjects()
-	p.CleanObjects()
+
+	for _, e := range p.entities {
+		e.Update()
+	}
+
+	for i, e := range p.entities {
+		if e.IsToDelete() {
+			p.entities = removeObject(p.entities, i)
+		}
+	}
 }
 
 func (p *Playground) Draw() {
-	p.DrawObjects()
-	p.DrawMouseBox()
+	for _, e := range p.entities {
+		e.Draw()
+	}
+
+	_, mousedOver := p.GetEntityAtMousePos()
+	if mousedOver != nil {
+		mousedOver.DrawMouseBox()
+	}
 }
 
 func (p *Playground) MouseInput() {
-	p.HandleClick(p.GetEntityAtMousePos())
-	p.HandleMouseDrag()
-	p.HandleClickRelease()
+
+	// Handle mouse clicks
+	mousedOverObjectIndex, mousedOverObject := p.GetEntityAtMousePos()
+	if mousedOverObject != nil {
+		if rl.IsMouseButtonPressed(0) {
+			if rl.IsKeyDown(rl.KeyLeftControl) {
+				mousedOverObject.AltAction()
+			} else {
+				p.PickUpObject(mousedOverObject)
+				p.MoveObjectToTop(mousedOverObjectIndex)
+			}
+		}
+
+		if rl.IsMouseButtonPressed(1) {
+			mousedOverObject.MarkToDelete()
+		}
+	}
+
+	// Handle mouse drag
+	if p.held != nil {
+		pos := p.held.GetPos()
+		mouseDelta := rl.GetMouseDelta()
+		p.held.SetPos(pos.X+mouseDelta.X, pos.Y+mouseDelta.Y)
+	}
+
+	// Handle mouse release
+	if rl.IsMouseButtonReleased(0) {
+		if p.held != nil {
+			_, obj := p.GetEntityAtMousePos()
+			if obj != nil {
+				p.held.DropInto(obj)
+			}
+			p.LetGoOfHeldObject()
+		}
+	}
 }
 
 func (p *Playground) KeyboardInput() {
@@ -66,25 +112,6 @@ func (p *Playground) KeyboardInput() {
 
 func (p *Playground) AddObject(o Object) {
 	p.entities = append(p.entities, o)
-}
-
-func (p *Playground) UpdateObjects() {
-	for _, e := range p.entities {
-		e.Update()
-	}
-}
-
-func (p *Playground) DrawObjects() {
-	for _, e := range p.entities {
-		e.Draw()
-	}
-}
-
-func (p *Playground) DrawMouseBox() {
-	_, mousedOver := p.GetEntityAtMousePos()
-	if mousedOver != nil {
-		mousedOver.DrawMouseBox()
-	}
 }
 
 func (p Playground) GetTopEntity() (int, Object) {
@@ -128,14 +155,6 @@ func (p Playground) GetEntityAtMousePos() (int, Object) {
 	}
 }
 
-func (p *Playground) CleanObjects() {
-	for i, e := range p.entities {
-		if e.IsToDelete() {
-			p.entities = removeObject(p.entities, i)
-		}
-	}
-}
-
 func (p *Playground) MoveObjectToTop(i int) {
 	p.entities = moveObjectToTop(p.entities, i)
 }
@@ -149,42 +168,5 @@ func (p *Playground) LetGoOfHeldObject() {
 	if p.held != nil {
 		p.held.SetIsHeld(false)
 		p.held = nil
-	}
-}
-
-func (p *Playground) HandleMouseDrag() {
-	if p.held != nil {
-		pos := p.held.GetPos()
-		mouseDelta := rl.GetMouseDelta()
-		p.held.SetPos(pos.X+mouseDelta.X, pos.Y+mouseDelta.Y)
-	}
-}
-
-func (p *Playground) HandleClick(i int, mousedOverObject Object) {
-	if mousedOverObject != nil {
-		if rl.IsMouseButtonPressed(0) {
-			if rl.IsKeyDown(rl.KeyLeftControl) {
-				mousedOverObject.AltAction()
-			} else {
-				p.PickUpObject(mousedOverObject)
-				p.MoveObjectToTop(i)
-			}
-		}
-
-		if rl.IsMouseButtonPressed(1) {
-			mousedOverObject.MarkToDelete()
-		}
-	}
-}
-
-func (p *Playground) HandleClickRelease() {
-	if rl.IsMouseButtonReleased(0) {
-		if p.held != nil {
-			_, obj := p.GetEntityAtMousePos()
-			if obj != nil {
-				p.held.DropInto(obj)
-			}
-			p.LetGoOfHeldObject()
-		}
 	}
 }
