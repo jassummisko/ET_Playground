@@ -84,7 +84,9 @@ func (seg Segment) GetWidth() int32 {
 	}
 }
 
-func (seg *Segment) DropInto(o Object) {}
+func (seg *Segment) DropInto(o Object) {
+	//TODO: CREATE PROSODIC STRUCTURE
+}
 
 func (seg *Segment) AltAction() {
 	seg.MarkToDelete()
