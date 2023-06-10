@@ -7,3 +7,5 @@ This is a work-in-progress playground used for testing out ideas within Element 
 - Ctrl-click an element to create a segment consisting of only one element.
 - You may create a simplex segment and then subsequently delete its only element to create an empty segment.
 - Right click on a segment to delete it. All of its elements will remain on the field and will have to be removed separately if necessary. This is intended behavior.
+
+![demo](demo/et_pg_demo.gif)
